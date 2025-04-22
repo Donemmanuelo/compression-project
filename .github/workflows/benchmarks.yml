@@ -1,0 +1,85 @@
+name: Run Benchmarks
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc
+
+      - name: Build Rust compressor
+        run: |
+          cd rust-compressor
+          cargo build --release
+          cd ..
+
+      - name: Build JavaScript compressor
+        run: |
+          cd js-compressor
+          npm install
+          npm run build
+          cd ..
+
+      - name: Run local benchmarks
+        run: |
+          chmod +x ./benchmarks/run_benchmarks.sh
+          ./benchmarks/run_benchmarks.sh > local_benchmark_results.md
+
+      - name: Build Docker images
+        run: |
+          cd rust-compressor
+          docker build -t rust-compressor .
+          cd ../js-compressor
+          docker build -t js-compressor .
+          cd ..
+
+      - name: Run Docker benchmarks
+        run: |
+          chmod +x ./benchmarks/docker_benchmarks.sh
+          ./benchmarks/docker_benchmarks.sh > docker_benchmark_results.md
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            local_benchmark_results.md
+            docker_benchmark_results.md
+
+      - name: Create comment with results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const localResults = fs.readFileSync('local_benchmark_results.md', 'utf8');
+            const dockerResults = fs.readFileSync('docker_benchmark_results.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Local Benchmark Results\n\n${localResults}\n\n## Docker Benchmark Results\n\n${dockerResults}`
+            }); 

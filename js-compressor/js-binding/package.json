@@ -1,0 +1,21 @@
+{
+  "name": "@compression/js-binding",
+  "version": "1.0.0",
+  "description": "JavaScript bindings for compression algorithms",
+  "main": "src/binding.js",
+  "bin": {
+    "compression-cli": "src/cli.js"
+  },
+  "scripts": {
+    "test": "jest",
+    "start": "node src/cli.js"
+  },
+  "dependencies": {
+    "@node-rs/helper": "^1.3.0",
+    "commander": "^11.0.0",
+    "progress": "^2.0.3"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+} 

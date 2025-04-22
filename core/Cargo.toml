@@ -1,0 +1,27 @@
+[package]
+name = "compressor"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "compression_cli"
+path = "src/lib.rs"
+
+[[bin]]
+name = "compression-cli"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0"
+clap = { version = "4.4", features = ["derive"] }
+indicatif = "0.17"
+
+[dev-dependencies]
+criterion = "0.5"
+test-case = "3.3"
+
+[features]
+default = []
+file-type-detection = []
+streams = []
+multiple-files = [] 
