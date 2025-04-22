@@ -3,8 +3,7 @@ name: Run Benchmarks
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  
   workflow_dispatch:
 
 jobs:
@@ -31,7 +30,7 @@ jobs:
 
       - name: Build Rust compressor
         run: |
-          cd rust-compressor
+          cd core
           cargo build --release
           cd ..
 
