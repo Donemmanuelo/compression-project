@@ -48,7 +48,7 @@ jobs:
 
       - name: Build Docker images
         run: |
-          cd rust-compressor
+          cd core
           docker build -t rust-compressor .
           cd ../js-compressor
           docker build -t js-compressor .
