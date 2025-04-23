@@ -5,7 +5,7 @@ WORKDIR /usr/src/compressor
 COPY . .
 
 # Build with all features enabled
-RUN cargo build --release --features "file-type-detection streams multiple-files"
+RUN cargo build --release 
 
 # Runtime stage
 FROM debian:bookworm-slim
