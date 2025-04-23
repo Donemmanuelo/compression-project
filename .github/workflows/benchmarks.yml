@@ -43,8 +43,8 @@ jobs:
 
       - name: Run local benchmarks
         run: |
-          chmod +x ./benchmarks/run_benchmarks.sh
-          ./benchmarks/run_benchmarks.sh > local_benchmark_results.md
+          chmod +x ./benchmarks/docker_benchmarks.sh
+          ./benchmarks/docker_benchmarks.sh > local_benchmark_results.md
 
       - name: Build Docker images
         run: |
