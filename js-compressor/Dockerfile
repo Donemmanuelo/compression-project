@@ -17,7 +17,7 @@ COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/index.js ./
 
 # Run as non-root user
-RUN useradd -m -u 1000 app && \
+RUN useradd -m -u 1001 app && \
     chown -R app:app /usr/src/app
 USER app
 
