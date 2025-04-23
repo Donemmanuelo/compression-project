@@ -41,7 +41,10 @@ jobs:
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=sha,format=short
-
+      - name: Configure Docker driver
+        run: |
+            echo '{"storage-driver": "overlay2"}' | sudo tee /etc/docker/daemon.json
+            sudo systemctl restart docker
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
