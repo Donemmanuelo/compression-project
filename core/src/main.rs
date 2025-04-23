@@ -2,8 +2,12 @@ use std::io::{self, Read, Write};
 use std::path::Path;
 use std::fs::File;
 use clap::{Parser, ValueEnum};
-use compressor::{compress, decompress, Algorithm, detect_file_type, suggest_algorithm};
+use compression_cli::{compress, decompress, Algorithm};
 
+#[cfg(feature = "file-type-detection")]
+use compression_cli::{detect_file_type, suggest_algorithm};
+
+#[cfg(feature = "file-type-detection")]
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
@@ -48,10 +52,10 @@ enum Operation {
     Decompress,
 }
 
-fn process_single_file(input: &str, output: &str, operation: Operation, algorithm: Algorithm) -> io::Result<()> {
+fn process_single_file(input: &str, output: &str, operation: Operation, algorithm: Algorithm, use_streams: bool) -> io::Result<()> {
     // Read input
     let mut input_data = Vec::new();
-    if input == "-" {
+    if use_streams && input == "-" {
         io::stdin().read_to_end(&mut input_data)?;
     } else {
         let mut file = File::open(input)?;
@@ -61,12 +65,20 @@ fn process_single_file(input: &str, output: &str, operation: Operation, algorith
     // Determine algorithm
     let algorithm = match algorithm {
         Algorithm::Auto => {
-            if input != "-" {
-                let file_type = detect_file_type(input)?;
-                suggest_algorithm(file_type)
-            } else {
-                Algorithm::Lz // Default to LZ for stdin
+            #[cfg(feature = "file-type-detection")]
+            {
+                if !use_streams && input != "-" {
+                    if let Ok(file_type) = detect_file_type(input) {
+                        suggest_algorithm(file_type)
+                    } else {
+                        Algorithm::Lz
+                    }
+                } else {
+                    Algorithm::Lz
+                }
             }
+            #[cfg(not(feature = "file-type-detection"))]
+            Algorithm::Lz
         }
         algo => algo,
     };
@@ -78,7 +90,7 @@ fn process_single_file(input: &str, output: &str, operation: Operation, algorith
     };
 
     // Write output
-    if output == "-" {
+    if use_streams && output == "-" {
         io::stdout().write_all(&result)?;
     } else {
         let mut file = File::create(output)?;
@@ -110,11 +122,11 @@ fn main() -> io::Result<()> {
             };
 
             let output_path = Path::new(&output_dir).join(output_name);
-            process_single_file(input, output_path.to_str().unwrap(), cli.operation, cli.algorithm)?;
+            process_single_file(input, output_path.to_str().unwrap(), cli.operation, cli.algorithm, cli.use_streams)?;
         }
     } else {
         // Single file processing
-        process_single_file(&cli.input, &cli.output, cli.operation, cli.algorithm)?;
+        process_single_file(&cli.input, &cli.output, cli.operation, cli.algorithm, cli.use_streams)?;
     }
 
     Ok(())

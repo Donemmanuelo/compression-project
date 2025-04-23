@@ -1,7 +1,7 @@
-use std::error::Error;
 use std::path::Path;
 use std::fs::File;
 use std::io::Read;
+use clap::ValueEnum;
 
 pub fn rle_compress(data: &[u8]) -> Vec<u8> {
     let mut compressed = Vec::new();
@@ -55,6 +55,7 @@ pub fn lz77_compress(data: &[u8]) -> Vec<u8> {
         let mut best_match = (0, 0);
         let start = if pos > window_size { pos - window_size } else { 0 };
         
+        // Find the best match in the window
         for i in start..pos {
             let mut match_len = 0;
             while match_len < lookahead_buffer 
@@ -69,12 +70,14 @@ pub fn lz77_compress(data: &[u8]) -> Vec<u8> {
             }
         }
 
+        // If we found a good match, encode it
         if best_match.1 > 2 {
             compressed.push((best_match.0 >> 8) as u8);
             compressed.push(best_match.0 as u8);
             compressed.push(best_match.1 as u8);
             pos += best_match.1;
         } else {
+            // No good match found, encode a literal
             compressed.push(0);
             compressed.push(0);
             compressed.push(0);
@@ -99,15 +102,24 @@ pub fn lz77_decompress(data: &[u8]) -> Vec<u8> {
         let length = data[i + 2] as usize;
 
         if offset == 0 && length == 0 {
+            // Literal byte
             if i + 4 <= data.len() {
                 decompressed.push(data[i + 3]);
             }
             i += 4;
         } else {
-            let start = decompressed.len() - offset;
+            // Match
+            let start = decompressed.len().saturating_sub(offset);
+            
+            // Copy the matched bytes
             for j in 0..length {
                 if start + j < decompressed.len() {
                     decompressed.push(decompressed[start + j]);
+                } else {
+                    // If we're trying to copy beyond the current decompressed data,
+                    // we need to copy from the beginning of the match
+                    let wrap_around = (start + j) % decompressed.len();
+                    decompressed.push(decompressed[wrap_around]);
                 }
             }
             i += 3;
@@ -117,12 +129,36 @@ pub fn lz77_decompress(data: &[u8]) -> Vec<u8> {
     decompressed
 }
 
+pub fn compress(data: &[u8], algorithm: Algorithm) -> Vec<u8> {
+    match algorithm {
+        Algorithm::Rle => rle_compress(data),
+        Algorithm::Lz => lz77_compress(data),
+        Algorithm::Auto => {
+            // Default to LZ for auto selection
+            lz77_compress(data)
+        }
+    }
+}
+
+pub fn decompress(data: &[u8], algorithm: Algorithm) -> Vec<u8> {
+    match algorithm {
+        Algorithm::Rle => rle_decompress(data),
+        Algorithm::Lz => lz77_decompress(data),
+        Algorithm::Auto => {
+            // Default to LZ for auto selection
+            lz77_decompress(data)
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum Algorithm {
     /// Run-length encoding
     Rle,
     /// Lempel-Ziv compression
     Lz,
+    /// Automatic algorithm selection
+    Auto,
 }
 
 #[cfg(feature = "file-type-detection")]

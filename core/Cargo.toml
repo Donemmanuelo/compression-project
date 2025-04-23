@@ -21,7 +21,7 @@ criterion = "0.5"
 test-case = "3.3"
 
 [features]
-default = []
+default = ["file-type-detection"]
 file-type-detection = []
 streams = []
 multiple-files = [] 

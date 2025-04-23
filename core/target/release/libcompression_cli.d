@@ -1,1 +1,1 @@
-/home/don/projects/compress-decompress/core/target/release/libcompression_cli.rlib: /home/don/projects/compress-decompress/core/src/lib.rs
+/home/don/projects/compression-project/core/target/release/libcompression_cli.rlib: /home/don/projects/compression-project/core/src/lib.rs
