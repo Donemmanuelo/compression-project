@@ -19,7 +19,7 @@ jobs:
           node-version: '20'
 
       - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v2
         with:
           profile: minimal  # Install only minimal components
           toolchain: stable # You can also specify `nightly` or a specific version like `1.70.0`
