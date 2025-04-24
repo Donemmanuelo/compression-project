@@ -69,6 +69,8 @@ jobs:
           target: ghcr.io/${{ vars.REPOSITORY }}/image2:latest  
           tag:  ghcr.io/${{ vars.REPOSITORY }}/image2:slim 
           overwrite: true
+      - name: list local docker image
+        run: docker image ls
       - name: Push slimmed Docker image
         run: |
           docker push ghcr.io/${{ vars.REPOSITORY }}/image1:slim
