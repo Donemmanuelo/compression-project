@@ -17,7 +17,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           resgistry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ vars.REPOS }}
           password: ${{ secrets.GITHUB_TOKEN }}
   
       - name: Set up Docker Buildx
