@@ -59,7 +59,7 @@ jobs:
         with:
           target: ghcr.io/${{ vars.REPOSITORY }}/image1:latest  
           tag:  ghcr.io/${{ vars.REPOSITORY }}/image1:slim
-          overwrite: true
+          overwrite: false
    
       - name: Slim Docker image2
         uses: kitabisa/docker-slim-action@v1
@@ -68,7 +68,7 @@ jobs:
         with:
           target: ghcr.io/${{ vars.REPOSITORY }}/image2:latest  
           tag:  ghcr.io/${{ vars.REPOSITORY }}/image2:slim 
-          overwrite: true
+          overwrite: false
       - name: list local docker image
         run: docker image ls
       - name: Push slimmed Docker image
