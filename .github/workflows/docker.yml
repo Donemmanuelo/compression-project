@@ -58,7 +58,7 @@ jobs:
           DSLIM_HTTP_PROBE: "false"  # Disables HTTP probing during slimming
         with:
           target: ghcr.io/${{ vars.REPOSITORY }}/image1:latest  
-          tag:  ghcr.io/${{ vars.REPOSITORY }}/image1:slim
+          tag: image1:slim
           overwrite: false
    
       - name: Slim Docker image2
@@ -67,7 +67,7 @@ jobs:
           DSLIM_HTTP_PROBE: "false"  # Disables HTTP probing during slimming
         with:
           target: ghcr.io/${{ vars.REPOSITORY }}/image2:latest  
-          tag:  ghcr.io/${{ vars.REPOSITORY }}/image2:slim 
+          tag: image2:slim 
           overwrite: false
       - name: list local docker image
         run: docker image ls
