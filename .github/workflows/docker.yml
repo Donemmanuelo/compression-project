@@ -56,6 +56,7 @@ jobs:
         with:
           target: ghcr.io/${{ vars.REPOSITORY }}/image1:latest  
           tag:  ghcr.io/${{ vars.REPOSITORY }}/image1:slim 
+          continue-after: 1
    
       - name: Slim Docker image2
         uses: kitabisa/docker-slim-action@v1
@@ -64,7 +65,7 @@ jobs:
         with:
           target: ghcr.io/${{ vars.REPOSITORY }}/image2:latest  
           tag:  ghcr.io/${{ vars.REPOSITORY }}/image2:slim 
-
+          continue-after: 1
       - name: Push slimmed Docker image
         run: |
           docker push ghcr.io/${{ vars.REPOSITORY }}/image1:slim
