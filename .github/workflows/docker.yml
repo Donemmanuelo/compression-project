@@ -14,9 +14,8 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ github.REPOSITORY }}
+          password: ${{ secrets.TOKEN }}
   
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -30,8 +29,8 @@ jobs:
           context: ./core/Dockerfile
           push: true
           tags: |
-            ghcr.io/donemmanuelo/compression-project/image1:main
-            ghcr.io/donemmanuelo/compression-project/image1:sha-${{ github.sha }}
+            ghcr.io/{{ github.RESPOSITORY }}/image1:latest
+            ghcr.io/{{ github.RESPOSITORY }}/image1:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -42,7 +41,7 @@ jobs:
           context: ./js-compressor/Dockerfile
           push: true
           tags: |
-            ghcr.io/donemmanuelo/compression-project/image2:main
-            ghcr.io/donemmanuelo/compression-project/image2:sha-${{ github.sha }}
+            ghcr.io/{{ github.RESPOSITORY }}/image2:latest
+            ghcr.io/{{ github.RESPOSITORY }}/image2:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
