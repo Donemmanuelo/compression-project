@@ -30,7 +30,7 @@ jobs:
       - name: Build and push image 1
         uses: docker/build-push-action@v6
         with:
-          context: ./blob/main/core/Dockerfile
+          context: ./core
           push: true
           tags: |
             ghcr.io/${{ vars.REPOSITORY }}/image1:latest
@@ -42,7 +42,7 @@ jobs:
       - name: Build and push image 2
         uses: docker/build-push-action@v6
         with:
-          context: ./blob/main/js-compressor/Dockerfile
+          context: ./js-compressor
           push: true
           tags: |
             ghcr.io/${{ vars.REPOSITORY }}/image2:latest
