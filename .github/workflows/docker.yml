@@ -32,8 +32,8 @@ jobs:
           context: ./core/Dockerfile
           push: true
           tags: |
-            ghcr.io/{{ vars.RESPOSITORY }}/image1:latest
-            ghcr.io/{{ vars.RESPOSITORY }}/image1:sha-${{ github.sha }}
+            ghcr.io/${{ vars.RESPOSITORY }}/image1:latest
+            ghcr.io/${{ vars.RESPOSITORY }}/image1:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -44,7 +44,7 @@ jobs:
           context: ./js-compressor/Dockerfile
           push: true
           tags: |
-            ghcr.io/{{ vars.RESPOSITORY }}/image2:latest
-            ghcr.io/{{ vars.RESPOSITORY }}/image2:sha-${{ github.sha }}
+            ghcr.io/${{ vars.RESPOSITORY }}/image2:latest
+            ghcr.io/${{ vars.RESPOSITORY }}/image2:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
