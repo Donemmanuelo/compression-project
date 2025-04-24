@@ -17,8 +17,7 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
-          resgistry: ghcr.io
-          username: ${{ vars.REPOS }}
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
   
       - name: Set up Docker Buildx
